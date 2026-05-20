@@ -44,118 +44,57 @@ body, input, textarea, button, select {
   opacity: 0;
   animation: loginFadeIn .6s ease .1s forwards;
 }
-#login-screen.out {
-  animation: loginFadeOut .4s ease forwards;
+#login-screen.out { animation: loginFadeOut .4s ease forwards; }
+#login-screen canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
-@keyframes loginFadeIn  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
-@keyframes loginFadeOut { from { opacity:1; } to { opacity:0; } }
+@keyframes loginFadeIn  { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none} }
+@keyframes loginFadeOut { from{opacity:1}to{opacity:0} }
 
 .login-wrap {
-  width: 340px;
+  position: relative;
+  z-index: 10;
+  width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
-  animation: loginFadeIn .7s ease .2s both;
+  gap: 36px;
 }
-
-/* 로고 영역 */
 .login-logo-area { text-align: center; }
-.login-wordmark {
-  font-size: 28px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: .1em;
-  margin-bottom: 8px;
-}
-.login-tagline {
-  font-size: 10px;
-  color: #555;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-}
-
-/* 구분선 */
-.login-divider {
-  width: 32px;
-  height: 1px;
-  background: #333;
-  margin: 0 auto;
-}
-
-/* 폼 */
-.login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-.login-form-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 4px;
-}
-.login-form-desc {
-  font-size: 11px;
-  color: #555;
-  margin-bottom: 20px;
-}
-.lf-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 12px;
-}
-.lf-label {
-  font-size: 9px;
-  color: #666;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
+.login-wordmark { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: .1em; margin-bottom: 8px; }
+.login-tagline  { font-size: 10px; color: #555; letter-spacing: .14em; text-transform: uppercase; }
+.login-form { width: 100%; }
+.login-form-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.login-form-desc  { font-size: 11px; color: #555; margin-bottom: 20px; }
+.lf-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.lf-label { font-size: 9px; color: #666; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
 .lf-input {
   background: #181818;
   border: 1px solid #2a2a2a;
-  border-radius: 0;
-  color: #fff;
+  color: #ffffff !important;
   padding: 11px 13px;
   font-size: 13px;
   font-family: inherit;
   outline: none;
-  transition: border-color .15s;
-}
-.lf-input:focus { border-color: #555; background: #1c1c1c; }
-.lf-input::placeholder { color: #444; }
-.lf-btn {
   width: 100%;
-  background: #fff;
-  color: #111;
-  border: none;
-  padding: 12px;
-  font-size: 13px;
-  font-weight: 800;
-  font-family: inherit;
-  cursor: pointer;
-  letter-spacing: .06em;
-  margin-top: 6px;
+  transition: border-color .15s;
+  -webkit-text-fill-color: #ffffff;
+}
+.lf-input:focus { border-color: #555; background: #1e1e1e; }
+.lf-input::placeholder { color: #444; -webkit-text-fill-color: #444; }
+.lf-btn {
+  width: 100%; background: #fff; color: #111; border: none;
+  padding: 12px; font-size: 13px; font-weight: 800; font-family: inherit;
+  cursor: pointer; letter-spacing: .06em; margin-top: 6px;
   transition: background .15s;
 }
 .lf-btn:hover { background: #e8e8e8; }
-.lf-error {
-  font-size: 11px;
-  color: #c0392b;
-  margin-top: 10px;
-  display: none;
-  text-align: center;
-}
-.lf-footer {
-  font-size: 10px;
-  color: #3a3a3a;
-  margin-top: 20px;
-  text-align: center;
-  letter-spacing: .02em;
-}
+.lf-error { font-size: 11px; color: #e74c3c; margin-top: 10px; display: none; text-align: center; }
+.lf-footer { font-size: 10px; color: #3a3a3a; margin-top: 20px; text-align: center; }
 
 /* ══ 포털 레이아웃 ══ */
 #portal {
@@ -408,6 +347,32 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
 /* 반응형 */
 @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .two-col { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .sidebar { display: none; } .main-wrap { margin-left: 0; } }
+
+/* ══ 누락 클래스 호환 ══ */
+.notice-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--g5); }
+.notice-item:last-child { border-bottom: none; }
+.notice-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--g4); flex-shrink: 0; margin-top: 6px; }
+.notice-dot.new { background: var(--blue); }
+.notice-title { font-size: 12px; color: var(--g1); line-height: 1.5; }
+.notice-meta { display: flex; gap: 6px; font-size: 10px; color: var(--g3); margin-top: 2px; }
+.notice-dept { color: var(--blue); font-weight: 700; }
+.new-badge { background: var(--blue-l); color: var(--blue); padding: 1px 5px; font-size: 9px; font-weight: 700; }
+.feed-item { padding: 8px 0; border-bottom: 1px solid var(--g5); }
+.feed-item:last-child { border-bottom: none; }
+.feed-source { font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--g3); margin-bottom: 3px; font-weight: 700; }
+.feed-title { font-size: 12px; color: var(--g1); line-height: 1.5; }
+.feed-time { font-size: 10px; color: var(--g3); margin-top: 2px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.card-more { font-size: 10px; color: var(--blue); cursor: pointer; font-weight: 700; }
+.kpi-badge { font-size: 10px; display: block; margin-top: 4px; }
+
+/* ══ page-body가 없는 페이지 fallback ══ */
+.page > .two-col,
+.page > .kpi-grid,
+.page > .bar-row,
+.page > table {
+  padding: 20px 26px;
+}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
 </head>
@@ -415,15 +380,12 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
 
 <!-- ── 로그인 화면 ── -->
 <div id="login-screen">
+  <canvas id="logo-canvas"></canvas>
   <div class="login-wrap">
-
-    <!-- 로고 -->
     <div class="login-logo-area">
       <div class="login-wordmark">FLOWEDU</div>
       <div class="login-tagline">경영관리본부 통합 포털</div>
     </div>
-
-    <!-- 입력 폼 -->
     <div class="login-form">
       <div class="login-form-title">로그인</div>
       <div class="login-form-desc">포털 계정으로 로그인하세요</div>
@@ -439,7 +401,6 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
       <div class="lf-error" id="login-error">아이디 또는 비밀번호를 확인해주세요.</div>
       <div class="lf-footer">로그인 문의 · 총무기획팀 내선 301</div>
     </div>
-
   </div>
 </div>
 
@@ -487,27 +448,29 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
     <div class="hero-eye">경영관리본부 통합 포털</div>
     <div class="page-title">대시보드</div>
     <div class="hero-sub" id="dash-date"></div>
-  </div>
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">전체 임직원</div><div class="kpi-value">142</div><span class="kpi-badge badge-up">이번 달 +3명</span></div>
-    <div class="kpi-card"><div class="kpi-label">오늘 열람</div><div class="kpi-value">87</div><span class="kpi-badge badge-up">어제 대비 +12</span></div>
-    <div class="kpi-card"><div class="kpi-label">오늘 다운로드</div><div class="kpi-value">14</div><span class="kpi-badge badge-warn">미확인 3건</span></div>
-    <div class="kpi-card"><div class="kpi-label">챗봇 질문</div><div class="kpi-value">31</div><span class="kpi-badge badge-blue">전주 대비 +8</span></div>
-  </div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-header"><div class="card-title">공지사항</div><div class="card-more" onclick="go('notice',null)">전체보기</div></div>
-      <div class="notice-item"><div class="notice-dot new"></div><div><div class="notice-title">5월 임직원 급여일 및 복리후생 안내</div><div class="notice-meta"><span class="notice-dept">경영관리본부</span><span class="notice-time">오늘</span><span class="new-badge">NEW</span></div></div></div>
-      <div class="notice-item"><div class="notice-dot new"></div><div><div class="notice-title">2025 하반기 캠퍼스 시설 점검 일정 공고</div><div class="notice-meta"><span class="notice-dept">총무기획팀</span><span class="notice-time">어제</span><span class="new-badge">NEW</span></div></div></div>
-      <div class="notice-item"><div class="notice-dot"></div><div><div class="notice-title">개인정보 처리방침 개정 및 동의 안내</div><div class="notice-meta"><span class="notice-dept">법무·준법</span><span class="notice-time">5월 10일</span></div></div></div>
-      <div class="notice-item"><div class="notice-dot"></div><div><div class="notice-title">여름 방학 특강 강사 모집 공고</div><div class="notice-meta"><span class="notice-dept">교육운영팀</span><span class="notice-time">5월 8일</span></div></div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">전체 임직원</div><div class="kpi-value">142</div><span class="kpi-badge badge-up">이번 달 +3명</span></div>
+      <div class="kpi-card"><div class="kpi-label">오늘 열람</div><div class="kpi-value">87</div><span class="kpi-badge badge-up">어제 대비 +12</span></div>
+      <div class="kpi-card"><div class="kpi-label">오늘 다운로드</div><div class="kpi-value">14</div><span class="kpi-badge badge-warn">미확인 3건</span></div>
+      <div class="kpi-card"><div class="kpi-label">챗봇 질문</div><div class="kpi-value">31</div><span class="kpi-badge badge-blue">전주 대비 +8</span></div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-title">교육부 뉴스 피드</div><div class="card-more" onclick="go('feed',null)">전체보기</div></div>
-      <div class="feed-item"><div class="feed-source">교육부</div><div class="feed-title">2025년 학원 설립·운영 등록 기준 개정 안내</div><div class="feed-time">오늘 09:00</div></div>
-      <div class="feed-item"><div class="feed-source">경기도 교육청</div><div class="feed-title">학원비 신고 의무화 시행령 세부 기준 발표</div><div class="feed-time">어제 14:30</div></div>
-      <div class="feed-item"><div class="feed-source">교육부</div><div class="feed-title">개인정보 처리방침 고시 개정 (학원 적용 포함)</div><div class="feed-time">5월 12일</div></div>
-      <div class="feed-item"><div class="feed-source">고용노동부</div><div class="feed-title">2025 최저임금 적용 Q&amp;A 안내문 배포</div><div class="feed-time">5월 10일</div></div>
+  </div>
+  <div class="page-body">
+    <div class="two-col">
+      <div class="col-l">
+        <div class="sec-lbl">공지사항</div>
+        <div class="ni"><div class="ni-date">오늘</div><div class="ni-body"><div class="ni-dept new">경영관리본부</div><div class="ni-title"><span class="ni-dot"></span>5월 임직원 급여일 및 복리후생 안내</div></div></div>
+        <div class="ni"><div class="ni-date">어제</div><div class="ni-body"><div class="ni-dept new">총무기획팀</div><div class="ni-title"><span class="ni-dot"></span>하반기 캠퍼스 시설 점검 일정 공고</div></div></div>
+        <div class="ni"><div class="ni-date">05.10</div><div class="ni-body"><div class="ni-dept">법무·준법</div><div class="ni-title">개인정보 처리방침 개정 및 동의 안내</div></div></div>
+        <div class="ni"><div class="ni-date">05.08</div><div class="ni-body"><div class="ni-dept">교육운영팀</div><div class="ni-title">여름방학 특강 강사 모집 공고</div></div></div>
+      </div>
+      <div class="col-r">
+        <div class="sec-lbl">교육 뉴스</div>
+        <div class="fi"><div class="fi-src">교육부 · 오늘</div><div class="fi-title">2025년 학원 설립·운영 등록 기준 개정 안내</div></div>
+        <div class="fi"><div class="fi-src">경기도 교육청 · 어제</div><div class="fi-title">학원비 신고 의무화 시행령 세부 기준 발표</div></div>
+        <div class="fi"><div class="fi-src">교육부 · 05.12</div><div class="fi-title">개인정보 처리방침 고시 개정 (학원 적용 포함)</div></div>
+        <div class="fi"><div class="fi-src">고용노동부 · 05.10</div><div class="fi-title">2025 최저임금 적용 Q&A 안내문 배포</div></div>
+      </div>
     </div>
   </div>
 </div>
