@@ -344,6 +344,26 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
 /* 관리자 전용 */
 .admin-section, .admin-lock { display: none; }
 
+/* ══ 플로팅 패널 초기 상태 ══ */
+.msg-panel {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  right: 26px;
+  width: 680px;
+  height: 460px;
+  background: var(--white);
+  border: 1px solid var(--black);
+  z-index: 300;
+  flex-direction: row;
+  overflow: hidden;
+}
+.msg-panel.open { display: flex; }
+.chatbox  { display: none; }
+.chatbox.open  { display: flex; }
+.naon-box { display: none; }
+.naon-box.open { display: flex; }
+
 /* 반응형 */
 @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .two-col { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .sidebar { display: none; } .main-wrap { margin-left: 0; } }
