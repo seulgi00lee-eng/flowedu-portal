@@ -36,37 +36,126 @@ body, input, textarea, button, select {
 #login-screen {
   position: fixed;
   inset: 0;
+  background: #0f0f0f;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  animation: loginFadeIn .6s ease .1s forwards;
+}
+#login-screen.out {
+  animation: loginFadeOut .4s ease forwards;
+}
+@keyframes loginFadeIn  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+@keyframes loginFadeOut { from { opacity:1; } to { opacity:0; } }
+
+.login-wrap {
+  width: 340px;
+  display: flex;
   flex-direction: column;
-  background: #0f0f0f;
-  z-index: 9999;
+  align-items: center;
+  gap: 40px;
+  animation: loginFadeIn .7s ease .2s both;
 }
-#login-screen.hidden { display: none; }
-.login-brand { text-align: center; margin-bottom: 28px; }
-.login-brand-row { display: flex; align-items: center; justify-content: center; }
-.login-brand-name { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: .08em; }
-.login-brand-name span { color: #aaa; }
-.login-brand-sub { font-size: 10px; color: #555; letter-spacing: .12em; text-transform: uppercase; margin-top: 6px; }
-.login-card { width: 320px; display: flex; flex-direction: column; gap: 0; }
-.login-card-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-.login-card-desc  { font-size: 11px; color: #666; margin-bottom: 20px; }
-.login-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
-.login-field label { font-size: 10px; color: #888; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
-.login-field input {
-  background: #1c1c1c; border: 1px solid #333; color: #fff;
-  padding: 10px 12px; font-size: 13px; font-family: inherit; outline: none;
+
+/* 로고 영역 */
+.login-logo-area { text-align: center; }
+.login-wordmark {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .1em;
+  margin-bottom: 8px;
 }
-.login-field input:focus { border-color: #666; }
-.login-btn {
-  width: 100%; background: #fff; color: #111; border: none;
-  padding: 11px; font-size: 13px; font-weight: 700; font-family: inherit;
-  cursor: pointer; letter-spacing: .04em; margin-top: 6px;
+.login-tagline {
+  font-size: 10px;
+  color: #555;
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
-.login-btn:hover { background: #e8e8e8; }
-.login-error { font-size: 11px; color: #c0392b; margin-top: 8px; display: none; text-align: center; }
-.login-footer { font-size: 10px; color: #444; margin-top: 16px; text-align: center; }
+
+/* 구분선 */
+.login-divider {
+  width: 32px;
+  height: 1px;
+  background: #333;
+  margin: 0 auto;
+}
+
+/* 폼 */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.login-form-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.login-form-desc {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 20px;
+}
+.lf-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.lf-label {
+  font-size: 9px;
+  color: #666;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.lf-input {
+  background: #181818;
+  border: 1px solid #2a2a2a;
+  border-radius: 0;
+  color: #fff;
+  padding: 11px 13px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.lf-input:focus { border-color: #555; background: #1c1c1c; }
+.lf-input::placeholder { color: #444; }
+.lf-btn {
+  width: 100%;
+  background: #fff;
+  color: #111;
+  border: none;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: .06em;
+  margin-top: 6px;
+  transition: background .15s;
+}
+.lf-btn:hover { background: #e8e8e8; }
+.lf-error {
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 10px;
+  display: none;
+  text-align: center;
+}
+.lf-footer {
+  font-size: 10px;
+  color: #3a3a3a;
+  margin-top: 20px;
+  text-align: center;
+  letter-spacing: .02em;
+}
 
 /* ══ 포털 레이아웃 ══ */
 #portal {
@@ -326,27 +415,31 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
 
 <!-- ── 로그인 화면 ── -->
 <div id="login-screen">
-  <canvas id="logo-canvas"></canvas>
-  <div class="login-brand">
-    <div class="login-brand-row">
-      <div class="login-brand-name">FLOW<span>EDU</span></div>
+  <div class="login-wrap">
+
+    <!-- 로고 -->
+    <div class="login-logo-area">
+      <div class="login-wordmark">FLOWEDU</div>
+      <div class="login-tagline">경영관리본부 통합 포털</div>
     </div>
-    <div class="login-brand-sub">경영관리본부 통합 포털</div>
-  </div>
-  <div class="login-card">
-    <div class="login-card-title">로그인</div>
-    <div class="login-card-desc">포털 계정으로 로그인하세요.</div>
-    <div class="login-field">
-      <label>아이디</label>
-      <input type="text" id="login-id" placeholder="아이디를 입력하세요" onkeydown="if(event.key==='Enter')doLogin()">
+
+    <!-- 입력 폼 -->
+    <div class="login-form">
+      <div class="login-form-title">로그인</div>
+      <div class="login-form-desc">포털 계정으로 로그인하세요</div>
+      <div class="lf-group">
+        <label class="lf-label">아이디</label>
+        <input class="lf-input" type="text" id="login-id" placeholder="아이디 입력" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">비밀번호</label>
+        <input class="lf-input" type="password" id="login-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="lf-btn" onclick="doLogin()">로그인</button>
+      <div class="lf-error" id="login-error">아이디 또는 비밀번호를 확인해주세요.</div>
+      <div class="lf-footer">로그인 문의 · 총무기획팀 내선 301</div>
     </div>
-    <div class="login-field">
-      <label>비밀번호</label>
-      <input type="password" id="login-pw" placeholder="비밀번호를 입력하세요" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" onclick="doLogin()">로그인</button>
-    <div class="login-error" id="login-error">아이디 또는 비밀번호를 확인해주세요.</div>
-    <div class="login-footer">로그인 문의 &middot; 총무기획팀 내선 301</div>
+
   </div>
 </div>
 
@@ -1145,6 +1238,7 @@ try {
   ];
 
   var canvas = document.getElementById('logo-canvas');
+  if (!canvas) return;
   var ctx = canvas.getContext('2d');
   var imgs = [];
   var particles = [];
@@ -1240,15 +1334,12 @@ function doLogin() {
   if (id === 'admin' && pw === '1234') {
     err.style.display = 'none';
     var screen = document.getElementById('login-screen');
-    screen.style.opacity = '0';
-    screen.style.transition = 'opacity 0.5s ease';
+    screen.classList.add('out');
     setTimeout(function(){
       screen.style.display = 'none';
-      screen.style.opacity = '';
-      screen.style.transition = '';
       var portal = document.getElementById('portal');
       if (portal) portal.classList.add('visible');
-    }, 500);
+    }, 400);
   } else {
     err.style.display = 'block';
     document.getElementById('login-pw').value = '';
