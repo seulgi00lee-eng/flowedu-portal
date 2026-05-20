@@ -500,6 +500,16 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
 @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .two-col { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .sidebar { display: none; } .main-wrap { margin-left: 0; } }
 
+/* ══ 지도 필터 버튼 ══ */
+.map-filter-btn {
+  padding: 4px 12px; font-size: 11px; font-weight: 700;
+  font-family: inherit; border: 1px solid var(--g5);
+  background: var(--white); color: var(--g3); cursor: pointer;
+  transition: all .12s;
+}
+.map-filter-btn:hover { color: var(--g1); border-color: var(--g3); }
+.map-filter-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
 /* ══ 누락 클래스 호환 ══ */
 .notice-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--g5); }
 .notice-item:last-child { border-bottom: none; }
@@ -527,6 +537,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
 }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
+<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4ec76cd838b247d5e6b7518bf9fc4c15&libraries=services"></script>
 </head>
 <body>
 
@@ -856,22 +867,32 @@ input:focus, select:focus, textarea:focus { border-color: var(--g1); background:
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">캠퍼스 · 학교 분포도</div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--blue)"><span style="width:10px;height:10px;background:var(--blue);border-radius:50%;display:inline-block"></span>우리 캠퍼스</span>
-        <span style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--green)"><span style="width:10px;height:10px;background:var(--green);border-radius:50%;display:inline-block"></span>초등학교</span>
-        <span style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--amber)"><span style="width:10px;height:10px;background:var(--amber);border-radius:50%;display:inline-block"></span>중학교</span>
-        <span style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--red)"><span style="width:10px;height:10px;background:var(--red);border-radius:50%;display:inline-block"></span>고등학교</span>
+  <div style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:800;color:var(--g1)">캠퍼스 · 학교 분포도</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <!-- 학제 필터 -->
+        <div style="display:flex;gap:4px" id="school-type-filter">
+          <button onclick="setSchoolType('all')"   class="map-filter-btn active" id="btn-all">전체</button>
+          <button onclick="setSchoolType('elem')"  class="map-filter-btn"        id="btn-elem">초등</button>
+          <button onclick="setSchoolType('middle')"class="map-filter-btn"        id="btn-middle">중등</button>
+          <button onclick="setSchoolType('high')"  class="map-filter-btn"        id="btn-high">고등</button>
+        </div>
       </div>
     </div>
-    <div style="position:relative;background:#eef2f7;border-radius:8px;overflow:hidden;height:340px;border:1px solid var(--border)" id="map-container">
-      <canvas id="map-canvas" style="width:100%;height:340px"></canvas>
-      <div id="map-tooltip" style="position:absolute;background:#1e293b;color:#fff;border-radius:6px;padding:7px 11px;font-size:11px;font-weight:700;pointer-events:none;display:none;z-index:10;white-space:nowrap"></div>
-      <!-- 캠퍼스 클릭 안내 -->
-      <div id="map-hint" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(30,41,59,.7);color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;pointer-events:none">파란 점(캠퍼스)을 클릭하면 인근 학원 현황을 볼 수 있습니다</div>
+
+    <!-- 카카오맵 컨테이너 -->
+    <div id="kakao-map" style="width:100%;height:400px;border:1px solid var(--g5)"></div>
+
+    <!-- 범례 -->
+    <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;font-weight:700;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:#1a56db;display:inline-block"></span>우리 캠퍼스</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></span>초등학교</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block"></span>중학교</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block"></span>고등학교</span>
+      <span style="display:flex;align-items:center;gap:4px;color:var(--g3)">캠퍼스 마커 클릭 → 인근 학원 현황</span>
     </div>
+  </div>
 
     <!-- 학원 현황 패널 (캠퍼스 클릭 시 표시) -->
     <div id="academy-panel" style="display:none;margin-top:14px;flex-direction:column;gap:12px">
@@ -1511,7 +1532,7 @@ function go(id, el) {
     el.classList.add('active');
   }
   renderCtxBar(id);
-  if (id === 'students') { setTimeout(function(){ renderTrendChart(); renderMapCanvas(); }, 50); }
+  if (id === 'students') { setTimeout(function(){ renderTrendChart(); initKakaoMap(); }, 100); }
   if (id === 'schedule') { setTimeout(initSchedulePage, 50); }
   if (id === 'campusstatus') { setTimeout(renderCampusStatus, 50); }
 }
@@ -3221,6 +3242,171 @@ function renderSchoolList() {
     tbody.appendChild(tr);
   });
 }
+
+/* ══════════════════════════════
+   카카오맵 연동
+   캠퍼스 8개 + 주변 초·중·고 마커
+   학제 필터, 캠퍼스 클릭 → 학원 현황
+══════════════════════════════ */
+var kakaoMap = null;
+var mapMarkers = [];
+var currentSchoolType = 'all';
+
+/* 캠퍼스 좌표 데이터 */
+var MAP_CAMPUS = [
+  {name:'수지 본원',  lat:37.3218, lng:127.0980, code:'SJ-A01'},
+  {name:'수지 분원',  lat:37.3150, lng:127.0850, code:'SJ-A02'},
+  {name:'분당 서현',  lat:37.3836, lng:127.1219, code:'BD-B01'},
+  {name:'분당 이매',  lat:37.3930, lng:127.1189, code:'BD-B02'},
+  {name:'분당 정자',  lat:37.3607, lng:127.1086, code:'BD-B03'},
+  {name:'판교',       lat:37.3944, lng:127.1106, code:'PK-C01'},
+  {name:'광교',       lat:37.2788, lng:127.0438, code:'GK-C02'},
+  {name:'동탄',       lat:37.2100, lng:127.0766, code:'DT-C03'},
+];
+
+/* 학교 데이터 (학교알리미 기반) */
+var MAP_SCHOOLS = [
+  /* 수지구 초등 */
+  {name:'수지초등학교',   lat:37.3230, lng:127.0960, type:'elem', students:1751},
+  {name:'풍덕초등학교',   lat:37.3180, lng:127.0920, type:'elem', students:1523},
+  {name:'신봉초등학교',   lat:37.3160, lng:127.0880, type:'elem', students:1312},
+  {name:'성복초등학교',   lat:37.3270, lng:127.0850, type:'elem', students:1189},
+  {name:'동천초등학교',   lat:37.3420, lng:127.0790, type:'elem', students:1050},
+  /* 수지구 중학 */
+  {name:'신봉중학교',     lat:37.3140, lng:127.0890, type:'middle', students:1230},
+  {name:'수지중학교',     lat:37.3210, lng:127.0970, type:'middle', students:1180},
+  {name:'죽전중학교',     lat:37.3310, lng:127.1050, type:'middle', students:980},
+  /* 수지구 고등 */
+  {name:'수지고등학교',   lat:37.3200, lng:127.0950, type:'high', students:1371},
+  {name:'풍덕고등학교',   lat:37.3170, lng:127.0930, type:'high', students:1312},
+  {name:'홍천고등학교',   lat:37.3350, lng:127.1000, type:'high', students:1217},
+  /* 분당 초등 */
+  {name:'서현초등학교',   lat:37.3840, lng:127.1210, type:'elem', students:1420},
+  {name:'이매초등학교',   lat:37.3920, lng:127.1190, type:'elem', students:1280},
+  {name:'분당중앙초등',   lat:37.3780, lng:127.1150, type:'elem', students:1100},
+  {name:'낙생초등학교',   lat:37.3700, lng:127.1200, type:'elem', students:980},
+  /* 분당 중학 */
+  {name:'서현중학교',     lat:37.3830, lng:127.1200, type:'middle', students:1150},
+  {name:'이매중학교',     lat:37.3930, lng:127.1170, type:'middle', students:1020},
+  {name:'분당중학교',     lat:37.3760, lng:127.1100, type:'middle', students:890},
+  /* 분당 고등 */
+  {name:'낙생고등학교',   lat:37.3710, lng:127.1210, type:'high', students:1280},
+  {name:'분당중앙고',     lat:37.3790, lng:127.1160, type:'high', students:1150},
+  /* 광교 */
+  {name:'산의초등학교',   lat:37.2810, lng:127.0460, type:'elem', students:980},
+  {name:'신풍초등학교',   lat:37.2770, lng:127.0420, type:'elem', students:870},
+  {name:'광교호수초등',   lat:37.2750, lng:127.0480, type:'elem', students:820},
+];
+
+var SCHOOL_COLORS = { elem:'#f59e0b', middle:'#3b82f6', high:'#ef4444' };
+var SCHOOL_LABELS = { elem:'초등', middle:'중학', high:'고등' };
+
+function initKakaoMap() {
+  var container = document.getElementById('kakao-map');
+  if (!container || typeof kakao === 'undefined') return;
+
+  var options = {
+    center: new kakao.maps.LatLng(37.3400, 127.0900),
+    level: 9
+  };
+  kakaoMap = new kakao.maps.Map(container, options);
+
+  /* 지도 컨트롤 */
+  kakaoMap.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
+  kakaoMap.addControl(new kakao.maps.MapTypeControl(), kakao.maps.ControlPosition.TOPRIGHT);
+
+  renderMapMarkers();
+}
+
+function renderMapMarkers() {
+  if (!kakaoMap) return;
+
+  /* 기존 마커 제거 */
+  mapMarkers.forEach(function(m){ m.setMap(null); });
+  mapMarkers = [];
+
+  var infowindow = new kakao.maps.InfoWindow({zIndex:10});
+
+  /* 캠퍼스 마커 (파란 F) */
+  MAP_CAMPUS.forEach(function(c) {
+    var content = '<div style="background:#1a56db;color:#fff;padding:4px 9px;font-size:11px;font-weight:800;border-radius:3px;white-space:nowrap">F ' + c.name + '</div>';
+    var overlay = new kakao.maps.CustomOverlay({
+      map: kakaoMap,
+      position: new kakao.maps.LatLng(c.lat, c.lng),
+      content: content,
+      yAnchor: 1.3
+    });
+    kakao.maps.event.addListener(overlay, 'click', function(){
+      showAcademyPanel(c.name);
+    });
+    /* 클릭 이벤트 - DOM에 추가된 후 */
+    mapMarkers.push(overlay);
+
+    /* 캠퍼스 점 마커 */
+    var circle = new kakao.maps.Circle({
+      center: new kakao.maps.LatLng(c.lat, c.lng),
+      radius: 200,
+      strokeWeight: 2, strokeColor:'#1a56db', strokeOpacity:1,
+      fillColor:'#1a56db', fillOpacity:0.9
+    });
+    circle.setMap(kakaoMap);
+    mapMarkers.push(circle);
+
+    /* 클릭시 학원현황 */
+    kakao.maps.event.addListener(circle, 'click', function(){
+      showAcademyPanel(c.name);
+    });
+  });
+
+  /* 학교 마커 */
+  MAP_SCHOOLS.forEach(function(s) {
+    if (currentSchoolType !== 'all' && s.type !== currentSchoolType) return;
+
+    var color = SCHOOL_COLORS[s.type];
+    var label = SCHOOL_LABELS[s.type];
+
+    var circle = new kakao.maps.Circle({
+      center: new kakao.maps.LatLng(s.lat, s.lng),
+      radius: 120,
+      strokeWeight: 1, strokeColor: color, strokeOpacity: 0.8,
+      fillColor: color, fillOpacity: 0.85
+    });
+    circle.setMap(kakaoMap);
+    mapMarkers.push(circle);
+
+    /* 학교 이름 오버레이 */
+    var label_content = '<div style="font-size:9px;font-weight:700;color:#333;white-space:nowrap;margin-top:2px;text-align:center">' + s.name.replace('학교','').replace('초등','초').replace('중학','중').replace('고등','고') + '</div>';
+    var labelOverlay = new kakao.maps.CustomOverlay({
+      map: kakaoMap,
+      position: new kakao.maps.LatLng(s.lat, s.lng),
+      content: label_content,
+      yAnchor: -0.3,
+      zIndex: 5
+    });
+    mapMarkers.push(labelOverlay);
+
+    /* 클릭 인포윈도우 */
+    kakao.maps.event.addListener(circle, 'click', function(){
+      var content = '<div style="padding:8px 12px;font-size:11px;font-weight:700;min-width:120px">' +
+        '<div style="font-weight:800;color:#111;margin-bottom:4px">' + s.name + '</div>' +
+        '<div style="color:#666;font-size:10px">' + label + ' · 재학생 ' + s.students.toLocaleString() + '명</div>' +
+        '</div>';
+      infowindow.setContent(content);
+      infowindow.open(kakaoMap, new kakao.maps.LatLng(s.lat, s.lng));
+    });
+  });
+}
+
+/* 학제 필터 */
+function setSchoolType(type) {
+  currentSchoolType = type;
+  document.querySelectorAll('.map-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.getElementById('btn-' + type);
+  if (btn) btn.classList.add('active');
+  renderMapMarkers();
+}
+
+function renderMapCanvas() { /* 구버전 캔버스 함수 - 카카오맵으로 대체됨 */ }
 
 function renderTrendChart() {
   var canvas = document.getElementById('trend-chart');
